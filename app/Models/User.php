@@ -3,7 +3,10 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Enums\GenderEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -40,5 +43,47 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'gender' => GenderEnum::class
     ];
+
+    /**
+     * The allergies that belong to the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function allergies(): BelongsToMany
+    {
+        return $this->belongsToMany(Allergy::class, 'user_allergy', 'user_id', 'allergy_id');
+    }
+
+    /**
+     * The dietaryWishes that belong to the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function dietaryWishes(): BelongsToMany
+    {
+        return $this->belongsToMany(DietaryWish::class, 'user_dietary_wish', 'user_id', 'dietary_wish_id');
+    }
+
+    /**
+     * The languages that belong to the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function languages(): BelongsToMany
+    {
+        return $this->belongsToMany(Language::class, 'user_language', 'user_id', 'language_id')
+            ->using(UserLanguage::class);
+    }
+
+    /**
+     * The personalityTraits that belong to the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function personalityTraits(): BelongsToMany
+    {
+        return $this->belongsToMany(PersonalityTrait::class, 'user_personality_trait', 'user_id', 'personality_trait_id');
+    }
 }
