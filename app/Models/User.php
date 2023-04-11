@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Enums\GenderEnum;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -43,7 +44,8 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'gender' => GenderEnum::class
+        'gender' => GenderEnum::class,
+        'date_of_birth' => 'date'
     ];
 
     /**
@@ -74,6 +76,9 @@ class User extends Authenticatable
     public function languages(): BelongsToMany
     {
         return $this->belongsToMany(Language::class, 'user_language', 'user_id', 'language_id')
+            ->withPivot([
+                'proficiency'
+            ])
             ->using(UserLanguage::class);
     }
 
@@ -85,5 +90,20 @@ class User extends Authenticatable
     public function personalityTraits(): BelongsToMany
     {
         return $this->belongsToMany(PersonalityTrait::class, 'user_personality_trait', 'user_id', 'personality_trait_id');
+    }
+
+    /**
+     * Apply scope to only
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $age
+     * @param int|null $maxAge
+     * @return void
+     */
+    public function scopeAge(Builder $query, int $minAge, int $maxAge = null): void {
+        $query->where(fn(Builder $q) => $q
+            ->where('date_of_birth', '<', now()->subYears($minAge))
+            ->where('date_of_birth', '>=', now()->subYears($maxAge ?? $minAge))
+        );
     }
 }
