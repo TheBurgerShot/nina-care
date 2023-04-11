@@ -18,7 +18,7 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'gender' => $this->gender,
-            'date_of_birth' => $this->date_of_birth->toDateString(),
+            'age' => $this->age,
             'bio' => $this->bio,
             'dietary_wishes' => $this->dietaryWishes->pluck('name'),
             'allergies' => $this->allergies->pluck('name'),

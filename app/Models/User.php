@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enums\GenderEnum;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -25,6 +26,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'gender',
+        'date_of_birth'
     ];
 
     /**
@@ -104,6 +107,16 @@ class User extends Authenticatable
         $query->where(fn(Builder $q) => $q
             ->where('date_of_birth', '<', now()->subYears($minAge))
             ->where('date_of_birth', '>=', now()->subYears($maxAge ?? $minAge))
+        );
+    }
+
+    /**
+     * Get the user's age.
+     */
+    protected function age(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->date_of_birth->age,
         );
     }
 }

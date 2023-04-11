@@ -24,9 +24,10 @@ class SearchRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'gender' => 'nullable', Rule::in(GenderEnum::values()),
-            'age' => 'integer|min:18:max:25',
-            'allergies' => 'nullable|exists:allergies,id',
+            'gender' => ['nullable', Rule::in(GenderEnum::values())],
+            'age' => 'nullable|array|size:2',
+            'age.*' => 'integer|min:18|max:25',
+            'allergies' => 'nullable|array',
             'allergies.*' => 'exists:allergies,id',
             'dietary_wishes' => 'nullable|array',
             'dietary_wishes.*' => 'exists:dietary_wishes,id',
