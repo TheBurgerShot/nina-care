@@ -20,9 +20,9 @@ class UserResource extends JsonResource
             'gender' => $this->gender,
             'date_of_birth' => $this->date_of_birth->toDateString(),
             'bio' => $this->bio,
-            'dietary_wishes' => DietaryWishResource::collection($this->dietaryWishes),
-            'allergies' => AllergyResource::collection($this->allergies),
-            'personality_traits' => PersonalityTraitResource::collection($this->personalityTraits),
+            'dietary_wishes' => $this->dietaryWishes->pluck('name'),
+            'allergies' => $this->allergies->pluck('name'),
+            'personality_traits' => $this->personalityTraits->pluck('name'),
             'languages' => LanguageResource::collection($this->languages),
         ];
     }
